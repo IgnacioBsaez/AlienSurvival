@@ -460,6 +460,14 @@ MonoBehaviour:
   limiteXderecha: 8.33
   limiteYarriba: 4.47
   limiteYabajo: -4.48
+  dobleTapTimer: 0.5
+  temp: 0
+  dashSpeed: 2
+  distaciaDash: 3
+  W: 0
+  A: 0
+  S: 0
+  D: 0
   gm: {fileID: 1736730855}
 --- !u!212 &678200915
 SpriteRenderer:
