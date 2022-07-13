@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Alien : MonoBehaviour
 {
-
-    public int healt = 3;
+    public HealthBar healthBar;
+    public int maxHealth = 10;
+    public int healt;
     public float speed;
 
     public Vector2 direccion;
     public float limiteXizquierda, limiteXderecha, limiteYarriba, limiteYabajo;
+
+    public Animator animator;
 
     public float dobleTapTimer;
     public float temp;
@@ -23,6 +28,11 @@ public class Alien : MonoBehaviour
     Vector3 direccionDash;
     bool onDash;
 
+    private void Start()
+    {
+        healt = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
+    }
     // Update is called once per frame
     void Update()
     {
@@ -59,6 +69,31 @@ public class Alien : MonoBehaviour
         DobleTapDetecter();
 
         //-----------------------------------------------------------------------------------------
+
+        //animator.SetFloat("X",direccion.x);
+        //animator.SetFloat("Y",direccion.y);
+
+        //-----------------------------------------------------------------------------------------
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            animator.SetTrigger("UP");
+        }else if (Input.GetKeyDown(KeyCode.S))
+        {
+            animator.SetTrigger("DWN");
+        }else if (Input.GetKeyDown(KeyCode.A))
+        {
+            animator.SetTrigger("LFT");
+        }else if (Input.GetKeyDown(KeyCode.D))
+        {
+            animator.SetTrigger("RIG");
+        }
+
+        if(healt <= 0)
+        {
+            //cambiar a esena game over
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -69,6 +104,18 @@ public class Alien : MonoBehaviour
 
             gm.score += 1;
             Destroy(collision.gameObject);
+        }
+        if (onDash && collision.gameObject.CompareTag("Enemy")) // al deslizarse destrulle enemigos
+        {
+
+                Debug.Log("coliciona");
+                Destroy(collision.gameObject);
+
+        }
+        if(!onDash && collision.gameObject.CompareTag("Enemy"))
+        {
+            healt -= 1;
+            healthBar.SetHealth(healt);
         }
     }
 
@@ -88,7 +135,7 @@ public class Alien : MonoBehaviour
                 {
                     direccionDash = transform.position + Vector3.up * distaciaDash ;
                     onDash = true;
-                    Debug.Log("doble tab");
+                   // Debug.Log("doble tab");
                     temp = 0;
                     W = false;
                 }
@@ -108,7 +155,7 @@ public class Alien : MonoBehaviour
                 {
                     direccionDash = transform.position + Vector3.left * distaciaDash;
                     onDash = true;
-                    Debug.Log("doble tab");
+                   // Debug.Log("doble tab");
                     temp = 0;
                     A = false;
                 }
@@ -128,7 +175,7 @@ public class Alien : MonoBehaviour
                 {
                     direccionDash = transform.position + Vector3.down * distaciaDash;
                     onDash = true;
-                    Debug.Log("doble tab");
+                   // Debug.Log("doble tab");
                     temp = 0;
                     S = false;
                 }
@@ -148,7 +195,7 @@ public class Alien : MonoBehaviour
                 {
                     direccionDash = transform.position + Vector3.right * distaciaDash;
                     onDash = true;
-                    Debug.Log("doble tab");
+                   // Debug.Log("doble tab");
                     temp = 0;
                     D = false;
                 }
@@ -188,4 +235,6 @@ public class Alien : MonoBehaviour
                 break;
         }
     }
+
+
 }
