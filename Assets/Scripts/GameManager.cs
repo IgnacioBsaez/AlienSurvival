@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GameManager : MonoBehaviour
 {
 
@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     public int score;
     public float time;
+    public TextMeshProUGUI socre;
 
     private void Awake()
     {
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         time += Time.deltaTime;
+        socre.text = score.ToString("00000");
     }
 
 }

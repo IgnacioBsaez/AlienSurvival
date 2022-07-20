@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour
             anim.Play("TarLFT");
         }
 
-        print(orientacion);
+        //print(orientacion);
         //transform.Translate(direccion * speed * Time.deltaTime);
     }
 

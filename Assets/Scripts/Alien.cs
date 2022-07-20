@@ -9,7 +9,9 @@ public class Alien : MonoBehaviour
     public HealthBar healthBar;
     public int maxHealth = 10;
     public int healt;
-    public float speed;
+    public float speed, punch;
+    public Rigidbody2D rb2d;
+    public TrailRenderer tr;
 
     public Vector2 direccion;
     public float limiteXizquierda, limiteXderecha, limiteYarriba, limiteYabajo;
@@ -25,13 +27,15 @@ public class Alien : MonoBehaviour
 
 
     public GameManager gm;
-    Vector3 direccionDash;
-    bool onDash;
+    Vector3 direccionDash,direccionHit;
+    public bool onDash;
+    public bool onHit;
 
     private void Start()
     {
-        healt = maxHealth;
+        //healt = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+        tr.enabled = false;
     }
     // Update is called once per frame
     void Update()
@@ -42,17 +46,27 @@ public class Alien : MonoBehaviour
         direccion.y = Input.GetAxisRaw("Vertical");
 
         // normalizar el vector
-        if (!onDash)
+        if (!onDash && !onHit)
         {
 
             transform.Translate(direccion.normalized * speed * Time.deltaTime);
         }
-        else
+        else if(onDash && !onHit)
         {
             transform.position = Vector3.MoveTowards(transform.position,direccionDash,speed * dashSpeed * Time.deltaTime);
+            tr.enabled = true;
             if(transform.position == direccionDash)
             {
                 onDash = false;
+                tr.enabled = false;
+            }
+        }
+        else if (!onDash && onHit)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, direccionHit, speed * dashSpeed * Time.deltaTime);
+            if (transform.position == direccionHit)
+            {
+                onHit = false;
 
             }
         }
@@ -89,31 +103,35 @@ public class Alien : MonoBehaviour
             animator.SetTrigger("RIG");
         }
 
+        healt = Mathf.Clamp(healt, 0 , maxHealth);
+
         if(healt <= 0)
         {
-            //cambiar a esena game over
+            SceneManager.LoadScene(1);
         }
-
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("food"))
-        {
-            // añadir puntaje y destruir objeto
-
-            gm.score += 1;
-            Destroy(collision.gameObject);
-        }
+        //if (collision.gameObject.CompareTag("food"))
+        //{
+        //    // añadir puntaje y destruir objeto
+        //    healt += 1;
+        //    gm.score += 1;
+        //    Destroy(collision.gameObject);
+        //}
         if (onDash && collision.gameObject.CompareTag("Enemy")) // al deslizarse destrulle enemigos
         {
 
-                Debug.Log("coliciona");
+                //Debug.Log("coliciona");
+                gm.score += 1;
                 Destroy(collision.gameObject);
 
         }
         if(!onDash && collision.gameObject.CompareTag("Enemy"))
         {
+            onHit = true;
+            direccionHit = (transform.position - collision.transform.position).normalized * punch;
             healt -= 1;
             healthBar.SetHealth(healt);
         }
@@ -235,6 +253,13 @@ public class Alien : MonoBehaviour
                 break;
         }
     }
+
+    public void SetHeal(int cantidad)
+    {
+        healt += cantidad;
+        healthBar.SetHealth(healt);
+    }
+
 
 
 }

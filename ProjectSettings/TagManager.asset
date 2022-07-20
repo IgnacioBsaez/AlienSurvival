@@ -6,6 +6,7 @@ TagManager:
   tags:
   - food
   - Enemy
+  - limite
   layers:
   - Default
   - TransparentFX
